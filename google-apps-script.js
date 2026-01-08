@@ -36,9 +36,10 @@ function doPost(e) {
         "Website", 
         "Jam Operasional", 
         "Wilayah", 
+        "Lain-lain",
         "File ZIP Link"
       ]);
-      sheet.getRange(1, 1, 1, 15).setFontWeight("bold").setBackground("#f3f3f3");
+      sheet.getRange(1, 1, 1, 16).setFontWeight("bold").setBackground("#f3f3f3");
     }
 
     var fileUrl = "-";
@@ -72,6 +73,7 @@ function doPost(e) {
       data.website || "-",
       data.operatingHours || "-",
       data.serviceArea || "-",
+      data.others || "-",
       fileUrl
     ]);
     

@@ -1,6 +1,6 @@
 {
   "name": "MunculDiGoogle - Playful Edition",
-  "description": "A vibrant Playful Geometric business profile collector with AI enhancement.",
+  "description": "A vibrant Playful Geometric business profile collector.",
   "requestFramePermissions": [
     "camera"
   ]

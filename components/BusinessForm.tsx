@@ -1,6 +1,5 @@
 
 import React, { useState } from 'react';
-import { GoogleGenAI } from "@google/genai";
 
 interface BusinessFormProps {
   onSuccess: (name: string) => void;
@@ -21,14 +20,13 @@ const BusinessForm: React.FC<BusinessFormProps> = ({ onSuccess }) => {
     website: '',
     operatingHours: '',
     serviceArea: '',
+    others: '',
     zipFile: '',
     zipFileName: '',
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isEnhancing, setIsEnhancing] = useState(false);
-  const [aiTip, setAiTip] = useState<string | null>(null);
 
   const validate = () => {
     const newErrors: Record<string, string> = {};
@@ -62,41 +60,6 @@ const BusinessForm: React.FC<BusinessFormProps> = ({ onSuccess }) => {
         });
       };
       reader.readAsDataURL(file);
-    }
-  };
-
-  const handleEnhanceDescription = async () => {
-    if (!formData.businessName) {
-      alert("Kasih tau nama bisnisnya dulu dong biar AI makin pinter!");
-      return;
-    }
-    setIsEnhancing(true);
-    try {
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-      const prompt = `Tuliskan deskripsi bisnis yang menarik, ceria, profesional, dan SEO-friendly untuk Google Business Profile.
-      Nama Bisnis: ${formData.businessName}
-      Kategori: ${formData.category}
-      Informasi tambahan: ${formData.description || "Tolong buatkan dari awal"}
-      Bahasa: Indonesia
-      Maksimal: 750 karakter.`;
-
-      const response = await ai.models.generateContent({
-        model: 'gemini-3-flash-preview',
-        contents: prompt,
-        config: {
-          systemInstruction: "Anda adalah copywriter kreatif yang suka gaya Playful Geometric.",
-          maxOutputTokens: 300,
-        }
-      });
-
-      const enhancedText = response.text || "";
-      setFormData(prev => ({ ...prev, description: enhancedText.slice(0, 750) }));
-      setAiTip("✨ Boom! Deskripsi makin keren.");
-      setTimeout(() => setAiTip(null), 3000);
-    } catch (error) {
-      alert("Waduh, AI lagi istirahat. Coba lagi ya!");
-    } finally {
-      setIsEnhancing(false);
     }
   };
 
@@ -169,24 +132,6 @@ const BusinessForm: React.FC<BusinessFormProps> = ({ onSuccess }) => {
         <div className="flex flex-col bg-gray-50 p-4 neo-brutalism relative">
           <div className="flex justify-between items-center mb-2">
             <span className="label-pill w-fit">Deskripsi Seru</span>
-            <button 
-              type="button"
-              onClick={handleEnhanceDescription}
-              disabled={isEnhancing}
-              className={`bg-[#FF007F] text-white font-bold py-1 px-4 neo-brutalism text-sm flex items-center gap-2 transition-all duration-100 ${isEnhancing ? 'translate-x-[4px] translate-y-[4px] [box-shadow:0px_0px_0px_#000] opacity-90' : ''}`}
-            >
-              {isEnhancing ? (
-                <>
-                  <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  Mikir Dulu...
-                </>
-              ) : (
-                <>✨ Pakai AI MAGIC</>
-              )}
-            </button>
           </div>
           <textarea 
             name="description"
@@ -196,8 +141,7 @@ const BusinessForm: React.FC<BusinessFormProps> = ({ onSuccess }) => {
             className={`neo-input resize-none ${errors.description ? 'border-red-500' : ''}`}
             placeholder="Jelaskan kenapa bisnis kamu juara..."
           ></textarea>
-          <div className="flex justify-between mt-2 font-bold italic text-sm">
-            <span className="text-pink-600">{aiTip}</span>
+          <div className="flex justify-end mt-2 font-bold italic text-sm">
             <span className={formData.description.length > 750 ? 'text-red-600' : 'text-black'}>
               {formData.description.length} / 750
             </span>
@@ -289,10 +233,29 @@ const BusinessForm: React.FC<BusinessFormProps> = ({ onSuccess }) => {
         </div>
       </div>
 
-      {/* Section 04 */}
+      {/* Section 04 - Lain-lain */}
       <div className="space-y-6">
         <h3 className="text-2xl font-black flex items-center gap-2">
-          <span className="bg-[#8F00FF] p-2 neo-brutalism leading-none text-white">04</span>
+          <span className="bg-[#FFD700] p-2 neo-brutalism leading-none">04</span>
+          LAIN-LAIN
+        </h3>
+        <div className="flex flex-col">
+          <span className="label-pill w-fit">Informasi Tambahan (Opsional)</span>
+          <textarea 
+            name="others"
+            rows={4}
+            value={formData.others}
+            onChange={handleChange}
+            className="neo-input resize-none"
+            placeholder="Ada hal lain yang mau ditambahkan? Tulis di sini ya..."
+          ></textarea>
+        </div>
+      </div>
+
+      {/* Section 05 - File & Media */}
+      <div className="space-y-6">
+        <h3 className="text-2xl font-black flex items-center gap-2">
+          <span className="bg-[#8F00FF] p-2 neo-brutalism leading-none text-white">05</span>
           FILE & MEDIA
         </h3>
         <div className="flex flex-col bg-[#00E5FF] p-6 neo-brutalism">
